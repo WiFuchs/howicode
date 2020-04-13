@@ -1,8 +1,84 @@
-<html>
+<!doctype html>
+<html lang="en">
     <head>
-
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css" type="text/css">
+        <style>
+        .map {
+            height: 800px;
+            width: 100%;
+        }
+        </style>
+        <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+        <title>OpenLayers example</title>
     </head>
     <body>
         <h2>Where's Group Six?</h2>
+        <div id="map" class="map"></div>
+        <script type="text/javascript">
+        var slo = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([-120.6572179, 35.2984485])),
+            name: 'SLO',
+            population: 2
+        });
+        var sf = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([-122.461298, 37.7708483])),
+            name: 'San Francisco',
+            population: 1
+        });
+        var sj = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([-121.9574968, 37.2970523])),
+            name: 'San Jose',
+            population: 2
+        });
+
+        var sloStyle = new ol.style.Style({
+            image: new ol.style.Icon({
+                scale: 2,
+                src: '../icons/flag-solid.svg',
+                anchor: [0, 1]
+            })
+        });
+        var sfStyle = new ol.style.Style({
+            image: new ol.style.Icon({
+                scale: 1,
+                src: '../icons/map-pin-solid.svg',
+                anchor: [0.5, 1]
+            })
+        });
+        var sjStyle = new ol.style.Style({
+            image: new ol.style.Icon({
+                scale: 2,
+                src: '../icons/thumbtack-solid.svg',
+                anchor: [0.5, 1]
+            })
+        });
+
+        slo.setStyle(sloStyle);
+        sf.setStyle(sfStyle);
+        sj.setStyle(sjStyle);
+
+        var vectorSource = new ol.source.Vector({
+            features: [slo, sf, sj]
+        });
+
+        var vectorLayer = new ol.layer.Vector({
+            source: vectorSource
+        });
+
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            }),
+            vectorLayer
+            ],
+            view: new ol.View({
+            center: ol.proj.fromLonLat([-120.6572179, 35.2984485]),
+            zoom: 7
+            })
+            });
+        </script>
+        <p>Icons from <a href="https://fontawesome.com/license">FontAwesome</a></p>
     </body>
 </html>
