@@ -15,50 +15,53 @@
         <h2>Where's Group Six?</h2>
         <div id="map" class="map"></div>
         <script type="text/javascript">
-        var slo = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.fromLonLat([-120.6572179, 35.2984485])),
-            name: 'SLO',
-            population: 2
-        });
-        var sf = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.fromLonLat([-122.461298, 37.7708483])),
-            name: 'San Francisco',
-            population: 1
-        });
-        var sj = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.fromLonLat([-121.9574968, 37.2970523])),
-            name: 'San Jose',
-            population: 2
-        });
+        var icons = [new ol.style.Icon({
+                        src: '../icons/flag-solid.svg',
+                        anchor: [0, 1]
+                    }),
+                    new ol.style.Icon({
+                        src: '../icons/map-pin-solid.svg',
+                        anchor: [0.5, 1]
+                    }),
+                    new ol.style.Icon({
+                        src: '../icons/thumbtack-solid.svg',
+                        anchor: [0.5, 1]
+                    })];
+        var locationSizes = [
+                            {
+                                location: [-120.6572179, 35.2984485],
+                                name: "SLO",
+                                size: 2
+                            },
+                            {
+                                location: [-122.461298, 37.7708483],
+                                name: "San Francisco",
+                                size: 1
+                            },
+                            {
+                                location: [-121.9574968, 37.2970523],
+                                name: "San Jose",
+                                size: 2
+                            }
+                            ]
 
-        var sloStyle = new ol.style.Style({
-            image: new ol.style.Icon({
-                scale: 2,
-                src: '../icons/flag-solid.svg',
-                anchor: [0, 1]
-            })
-        });
-        var sfStyle = new ol.style.Style({
-            image: new ol.style.Icon({
-                scale: 1,
-                src: '../icons/map-pin-solid.svg',
-                anchor: [0.5, 1]
-            })
-        });
-        var sjStyle = new ol.style.Style({
-            image: new ol.style.Icon({
-                scale: 2,
-                src: '../icons/thumbtack-solid.svg',
-                anchor: [0.5, 1]
-            })
-        });
-
-        slo.setStyle(sloStyle);
-        sf.setStyle(sfStyle);
-        sj.setStyle(sjStyle);
+        // create the OpenLayers markers for the cities
+        var features = [];
+        for (var i = 0; i < locationSizes.length; i++) {
+            var feat = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(locationSizes[i]["location"])),
+                name: locationSizes[i]["name"]
+            });
+            var icon = icons[i%icons.length].clone();
+            icon.setScale(Math.log(locationSizes[i]["size"])+1);
+            feat.setStyle(new ol.style.Style({
+                image: icon
+            }));
+            features[i] = feat;
+        }
 
         var vectorSource = new ol.source.Vector({
-            features: [slo, sf, sj]
+            features: features
         });
 
         var vectorLayer = new ol.layer.Vector({
